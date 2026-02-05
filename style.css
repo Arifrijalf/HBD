@@ -1,4 +1,6 @@
-/* Reset CSS */
+/* =========================================
+   RESET & DASAR
+========================================= */
 * {
   margin: 0;
   padding: 0;
@@ -8,12 +10,87 @@
 
 body {
   background: black;
-  overflow: hidden;
+  overflow: hidden; /* Mencegah scroll */
+  height: 100dvh;   /* Tinggi layar penuh untuk HP modern */
 }
 
-/* ===============================
-   HALAMAN PEMBUKA
-================================ */
+/* =========================================
+   1. HALAMAN PERTAMA: PERTANYAAN (PROPOSAL)
+========================================= */
+#proposal {
+  position: fixed;
+  inset: 0;
+  background: #ffe6e6; /* Latar pink muda romantis */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 20; /* Paling atas agar muncul duluan */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+/* Class pembantu untuk memunculkan halaman */
+#proposal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#proposal img {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#proposal h2 {
+  font-size: 1.5rem;
+  color: #d63384; /* Pink tua */
+  margin-bottom: 30px;
+  padding: 0 20px;
+  font-weight: 600;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap; /* Agar aman di layar kecil */
+}
+
+#yesBtn {
+  background-color: #28a745; /* Hijau */
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi membesar kenyal */
+}
+
+#noBtn {
+  background-color: #dc3545; /* Merah */
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+/* =========================================
+   2. HALAMAN KEDUA: INTRO (ULANG TAHUN)
+========================================= */
 #intro {
   position: fixed;
   inset: 0;
@@ -23,26 +100,38 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 10;
   text-align: center;
-  transition: opacity 0.8s ease; /* Transisi halus saat hilang */
+  z-index: 15; /* Di bawah proposal, tapi di atas slider */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  padding: 20px;
+}
+
+#intro.show {
+  opacity: 1;
+  pointer-events: all;
 }
 
 #intro h1 {
   font-size: 2rem;
-  font-weight: 400;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #ff9abf; /* Pink pastel */
 }
 
 #intro p {
-  margin-top: 15px;
   font-size: 1rem;
-  opacity: .8;
+  opacity: 0.9;
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 
-#intro button {
+#startBtn {
   margin-top: 40px;
-  padding: 12px 28px;
+  padding: 12px 35px;
   font-size: 1rem;
+  font-weight: 600;
   border: none;
   border-radius: 30px;
   background: white;
@@ -51,52 +140,45 @@ body {
   transition: transform 0.2s;
 }
 
-#intro button:active {
+#startBtn:active {
   transform: scale(0.95);
 }
 
-/* ===============================
-   SLIDER AREA
-================================ */
+/* =========================================
+   3. HALAMAN KETIGA: SLIDER FOTO
+========================================= */
 .slider {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh; /* Satuan khusus mobile browser */
+  background: black;
   opacity: 0;
   transition: opacity 1.5s ease;
+  z-index: 1;
 }
 
 .slider.show {
   opacity: 1;
 }
 
-/* Overlay Gelap di atas Foto */
+/* Overlay gradient agar teks terbaca */
 .slider::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.7), transparent 60%);
-  z-index: 1;
-  pointer-events: none; /* Supaya klik tembus ke bawah jika perlu */
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 10%, transparent 50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* ===============================
-   TAMPILAN FOTO (ANTI CROP)
-================================ */
-
+/* Style Foto agar tidak terpotong (Anti-Crop) */
 .slide {
   position: absolute;
   inset: 0;
-  
-  /* PENTING: Agar foto utuh 100% tanpa terpotong */
-  object-fit: contain; 
-  
-  /* PENTING: Agar pas di layar HP modern (mengatasi address bar browser) */
   width: 100%;
-  height: 100dvh; 
-  
-  /* Latar belakang hitam untuk sisa ruang kosong (letterbox) */
-  background-color: black; 
+  height: 100dvh;
+  object-fit: contain; /* Foto utuh, sisa ruang hitam */
+  background-color: black;
   
   /* Posisi awal animasi */
   opacity: 0;
@@ -104,47 +186,39 @@ body {
   z-index: 1;
 }
 
-/* Saat slide AKTIF (Muncul) */
+/* Saat foto AKTIF (Muncul) - Animasi Slow Zoom */
 .slide.active {
   opacity: 1;
-  /* Zoom in sedikit agar tetap terlihat hidup (tapi foto tetap utuh) */
-  transform: scale(1.05); 
+  transform: scale(1.05); /* Zoom in pelan */
   z-index: 2;
-  
-  /* Transisi halus:
-     - Opacity: 2 detik
-     - Transform (Zoom): 7 detik
-  */
+  /* Transisi: Opacity 2 detik, Zoom 7 detik */
   transition: opacity 2s ease-in-out, transform 7s cubic-bezier(0.215, 0.610, 0.355, 1.000);
 }
 
-/* Saat slide KELUAR */
+/* Saat foto KELUAR - Tetap di posisi zoom terakhir */
 .slide.exit {
   opacity: 0;
-  /* Tetap pertahankan posisi zoom terakhir saat menghilang */
-  transform: scale(1.05); 
+  transform: scale(1.05);
   z-index: 1;
-  
-  /* Hanya transisi opacity agar tidak melompat */
   transition: opacity 2s ease-in-out;
 }
 
-/* ===============================
-   TEKS PESAN
-================================ */
+/* =========================================
+   TEKS PESAN (CAPTION)
+========================================= */
 .text {
   position: absolute;
-  bottom: 15%;
+  bottom: 15%; /* Posisi dari bawah */
   width: 100%;
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   color: white;
-  padding: 0 20px;
+  padding: 0 25px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  z-index: 3;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  transform: translateY(20px);
+  z-index: 5; /* Di atas overlay gradient */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 .text.show {
@@ -154,12 +228,12 @@ body {
 
 .text.hide {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(20px);
 }
 
-/* ===============================
-   HALAMAN PENUTUP (FINAL)
-================================ */
+/* =========================================
+   4. HALAMAN TERAKHIR: PENUTUP (FINAL)
+========================================= */
 #final {
   position: absolute;
   inset: 0;
@@ -172,9 +246,9 @@ body {
   text-align: center;
   padding: 30px;
   opacity: 0;
-  pointer-events: none; /* Agar tidak menutupi saat belum muncul */
+  pointer-events: none;
+  z-index: 10;
   transition: opacity 2s ease;
-  z-index: 5;
 }
 
 #final.show {
@@ -183,9 +257,10 @@ body {
 }
 
 #final p {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   line-height: 1.8;
   margin-bottom: 30px;
+  color: #f0f0f0;
 }
 
 #replay {
@@ -195,5 +270,11 @@ body {
   background: white;
   color: black;
   font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#replay:active {
+  transform: scale(0.95);
 }

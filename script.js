@@ -1,14 +1,19 @@
-// Ambil elemen dari DOM
+// ELEMEN DOM
 const slides = document.querySelectorAll(".slide");
 const textEl = document.getElementById("message");
-const slider = document.getElementById("slider");
-const intro = document.getElementById("intro");
+const sliderScreen = document.getElementById("slider");
+const introScreen = document.getElementById("intro");
+const proposalScreen = document.getElementById("proposal");
 const finalScreen = document.getElementById("final");
 const music = document.getElementById("music");
-const startBtn = document.getElementById("startBtn");
+
+// TOMBOL
+const startBtn = document.getElementById("startBtn"); // Tombol di Intro
+const yesBtn = document.getElementById("yesBtn");     // Tombol Sayang
+const noBtn = document.getElementById("noBtn");       // Tombol Enggak
 const replayBtn = document.getElementById("replay");
 
-// Daftar Pesan (Hanya 8 pesan)
+// PESAN SLIDER (Hanya 8 pesan)
 const messages = [
   "Selamat ulang tahun sayang ehh elaa 🤍",
   "Semoga hari ini penuh senyum",
@@ -20,83 +25,122 @@ const messages = [
   "ada pesan di akhir nanti untuk elaa"
 ];
 
+// TEKS UNTUK TOMBOL NO
+const noTexts = [
+  "Yakin gak sayang?", "Masa sih?", "Jangan bohong 😢", 
+  "Masa iyaa", "Masihh kann", "Awas ya kalau enggak 😡"
+];
+
 let index = 0;
 let interval;
+let yesFontSize = 1; 
+let noClickCount = 0;
 
-// Inisialisasi slide pertama
+// Set slide pertama
 if (slides.length > 0) {
   slides[0].classList.add("active");
-  // Set teks awal (karena index 0 pasti ada pesannya)
   textEl.textContent = messages[0];
 }
 
-// Tombol Mulai
-startBtn.onclick = () => {
-  intro.style.opacity = 0; 
+// ==========================================
+// 1. LOGIKA TOMBOL 'NO' (JAIL)
+// ==========================================
+noBtn.addEventListener("click", () => {
+  if (noClickCount < noTexts.length) {
+    noBtn.textContent = noTexts[noClickCount];
+  } else {
+    noBtn.textContent = "IYAIN AJA DEH! 😤";
+  }
+  noClickCount++;
+  
+  // Perbesar tombol YES
+  yesFontSize += 0.4;
+  yesBtn.style.transform = `scale(${yesFontSize})`;
+});
+
+// ==========================================
+// 2. LOGIKA TOMBOL 'YES' (PINDAH KE INTRO)
+// ==========================================
+yesBtn.addEventListener("click", () => {
+  // Sembunyikan Pertanyaan
+  proposalScreen.style.opacity = 0;
+  
   setTimeout(() => {
-    intro.style.display = "none";
-    slider.classList.add("show");
+    proposalScreen.style.display = "none";
     
-    music.play().catch(error => console.log("Playback error:", error));
+    // Munculkan Intro Ulang Tahun
+    introScreen.classList.add("show");
+  }, 1000);
+});
+
+// ==========================================
+// 3. LOGIKA TOMBOL START (MULAI MUSIK & FOTO)
+// ==========================================
+startBtn.onclick = () => {
+  introScreen.style.opacity = 0;
+  
+  // Putar Musik
+  music.play().catch(err => console.log("Gagal putar musik otomatis:", err));
+
+  setTimeout(() => {
+    introScreen.style.display = "none";
     
-    // Tampilkan teks pertama
+    // Munculkan Slider
+    sliderScreen.classList.add("show");
     textEl.classList.add("show");
     
     startSlider();
   }, 800);
 };
 
+// ==========================================
+// 4. FUNGSI SLIDER
+// ==========================================
 function startSlider() {
   interval = setInterval(() => {
-    // Cek apakah sudah di slide terakhir (Foto ke-15)
+    // Cek Selesai
     if (index === slides.length - 1) {
       clearInterval(interval);
       endScene();
       return;
     }
 
-    // 1. Sembunyikan teks lama (Setiap ganti slide, teks wajib hilang dulu)
+    // Ganti Slide & Teks
     textEl.classList.remove("show");
     textEl.classList.add("hide");
 
-    // 2. Ganti slide foto
     slides[index].classList.remove("active");
     slides[index].classList.add("exit");
 
     index++;
     slides[index].classList.add("active");
 
-    // 3. Cek: Apakah untuk foto ini ada pesannya?
+    // Tampilkan pesan jika masih ada (foto 1-8)
     if (index < messages.length) {
-      // KALAU ADA PESAN (Foto 1-8):
       setTimeout(() => {
         textEl.textContent = messages[index];
         textEl.classList.remove("hide");
         textEl.classList.add("show");
-      }, 600); // Muncul setelah delay dikit
-    } 
-    else {
-      // KALAU TIDAK ADA PESAN (Foto 9-15):
-      // Biarkan tetap tersembunyi (hide), jangan lakukan apa-apa.
-      // Teks akan tetap hilang sampai slide habis.
+      }, 600);
     }
 
-  }, 4500); // Ganti slide setiap 4.5 detik
+  }, 4500);
 }
 
+// ==========================================
+// 5. AKHIR (FINAL SCREEN)
+// ==========================================
 function endScene() {
-  // Pastikan teks benar-benar hilang sebelum layar akhir
   textEl.classList.remove("show");
   textEl.classList.add("hide");
 
   setTimeout(() => {
-    slider.style.opacity = 0;
+    sliderScreen.style.opacity = 0;
     setTimeout(() => {
       finalScreen.classList.add("show");
     }, 1500);
   }, 2000);
 }
 
-replayBtn.onclick = () => {
-  location.reload();
-};
+// Ulang
+replayBtn.onclick = () => location.reload();
