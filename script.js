@@ -1,61 +1,102 @@
-// ===============================
-// SLIDER FOTO + TEKS HALUS
-// ===============================
-
-// ambil semua slide & teks
+// Ambil elemen dari DOM
 const slides = document.querySelectorAll(".slide");
 const textEl = document.getElementById("message");
+const slider = document.getElementById("slider");
+const intro = document.getElementById("intro");
+const finalScreen = document.getElementById("final");
+const music = document.getElementById("music");
+const startBtn = document.getElementById("startBtn");
+const replayBtn = document.getElementById("replay");
 
-// teks ucapan (sesuai urutan foto)
+// Daftar Pesan (Hanya 8 pesan)
 const messages = [
-  "Selamat ulang tahun sayang 🤍",
+  "Selamat ulang tahun sayang ehh elaa 🤍",
   "Semoga hari ini penuh senyum",
-  "Semoga semua hal baik selalu datang ke kamu",
-  "Terima kasih sudah jadi diri kamu yang luar biasa",
-  "Aku selalu doakan yang terbaik buat kamu"
+  "Semoga semua doa baik elaa terkabul",
+  "Semoga panjang umur, sehat selalu",
+  "Rip selalu doakan yang terbaik buat elaa",
+  "Rip hanya bisa bikin ini ajaa",
+  "Maap yaa kalau gak sesuai harapan elaa",
+  "ada pesan di akhir nanti untuk elaa"
 ];
 
-// index slide aktif
 let index = 0;
+let interval;
 
-// set awal
-slides[0].classList.add("active");
-textEl.textContent = messages[0];
-textEl.classList.add("show");
+// Inisialisasi slide pertama
+if (slides.length > 0) {
+  slides[0].classList.add("active");
+  // Set teks awal (karena index 0 pasti ada pesannya)
+  textEl.textContent = messages[0];
+}
 
-// interval waktu (ms)
-const SLIDE_DURATION = 4500;
-const TEXT_DELAY = 600; // jeda teks setelah slide mulai
+// Tombol Mulai
+startBtn.onclick = () => {
+  intro.style.opacity = 0; 
+  setTimeout(() => {
+    intro.style.display = "none";
+    slider.classList.add("show");
+    
+    music.play().catch(error => console.log("Playback error:", error));
+    
+    // Tampilkan teks pertama
+    textEl.classList.add("show");
+    
+    startSlider();
+  }, 800);
+};
 
-function startSlider(){
-  setInterval(() => {
+function startSlider() {
+  interval = setInterval(() => {
+    // Cek apakah sudah di slide terakhir (Foto ke-15)
+    if (index === slides.length - 1) {
+      clearInterval(interval);
+      endScene();
+      return;
+    }
 
-    // ===== 1. SEMBUNYIKAN TEKS =====
+    // 1. Sembunyikan teks lama (Setiap ganti slide, teks wajib hilang dulu)
     textEl.classList.remove("show");
     textEl.classList.add("hide");
 
-    // ===== 2. FOTO LAMA KELUAR =====
+    // 2. Ganti slide foto
     slides[index].classList.remove("active");
     slides[index].classList.add("exit");
 
-    // hitung slide berikutnya
-    const next = (index + 1) % slides.length;
+    index++;
+    slides[index].classList.add("active");
 
-    // ===== 3. FOTO BARU MASUK =====
-    slides[next].classList.remove("exit");
-    slides[next].classList.add("active");
+    // 3. Cek: Apakah untuk foto ini ada pesannya?
+    if (index < messages.length) {
+      // KALAU ADA PESAN (Foto 1-8):
+      setTimeout(() => {
+        textEl.textContent = messages[index];
+        textEl.classList.remove("hide");
+        textEl.classList.add("show");
+      }, 600); // Muncul setelah delay dikit
+    } 
+    else {
+      // KALAU TIDAK ADA PESAN (Foto 9-15):
+      // Biarkan tetap tersembunyi (hide), jangan lakukan apa-apa.
+      // Teks akan tetap hilang sampai slide habis.
+    }
 
-    // ===== 4. GANTI TEKS SETELAH JEDA =====
-    setTimeout(() => {
-      textEl.textContent = messages[next % messages.length];
-      textEl.classList.remove("hide");
-      textEl.classList.add("show");
-    }, TEXT_DELAY);
-
-    index = next;
-
-  }, SLIDE_DURATION);
+  }, 4500); // Ganti slide setiap 4.5 detik
 }
 
-// mulai slider
-startSlider();
+function endScene() {
+  // Pastikan teks benar-benar hilang sebelum layar akhir
+  textEl.classList.remove("show");
+  textEl.classList.add("hide");
+
+  setTimeout(() => {
+    slider.style.opacity = 0;
+    setTimeout(() => {
+      finalScreen.classList.add("show");
+    }, 1500);
+  }, 2000);
+}
+
+replayBtn.onclick = () => {
+  location.reload();
+};
