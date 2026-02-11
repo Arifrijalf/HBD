@@ -10,8 +10,8 @@
 
 body {
   background: black;
-  overflow: hidden; /* Mencegah scroll */
-  height: 100dvh;   /* Tinggi layar penuh untuk HP modern */
+  overflow: hidden; /* Mencegah scroll agar rapi */
+  height: 100dvh;   /* Tinggi layar penuh (aman untuk browser HP) */
 }
 
 /* =========================================
@@ -32,7 +32,6 @@ body {
   transition: opacity 1s ease;
 }
 
-/* Class pembantu untuk memunculkan halaman */
 #proposal.show {
   opacity: 1;
   pointer-events: all;
@@ -59,7 +58,7 @@ body {
   gap: 20px;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap; /* Agar aman di layar kecil */
+  flex-wrap: wrap; 
 }
 
 #yesBtn {
@@ -72,7 +71,7 @@ body {
   border-radius: 50px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi membesar kenyal */
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #noBtn {
@@ -101,7 +100,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  z-index: 15; /* Di bawah proposal, tapi di atas slider */
+  z-index: 15; /* Di bawah proposal, di atas slider */
   opacity: 0;
   pointer-events: none;
   transition: opacity 1s ease;
@@ -150,7 +149,7 @@ body {
 .slider {
   position: relative;
   width: 100vw;
-  height: 100dvh; /* Satuan khusus mobile browser */
+  height: 100dvh;
   background: black;
   opacity: 0;
   transition: opacity 1.5s ease;
@@ -161,7 +160,7 @@ body {
   opacity: 1;
 }
 
-/* Overlay gradient agar teks terbaca */
+/* Overlay gradient agar teks terbaca jelas */
 .slider::after {
   content: "";
   position: absolute;
@@ -171,31 +170,27 @@ body {
   pointer-events: none;
 }
 
-/* Style Foto agar tidak terpotong (Anti-Crop) */
+/* Style Foto Anti-Crop (Utuh) */
 .slide {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100dvh;
-  object-fit: contain; /* Foto utuh, sisa ruang hitam */
+  object-fit: contain; /* Memastikan foto tidak terpotong */
   background-color: black;
-  
-  /* Posisi awal animasi */
   opacity: 0;
   transform: scale(1);
   z-index: 1;
 }
 
-/* Saat foto AKTIF (Muncul) - Animasi Slow Zoom */
+/* Transisi Foto (Slow Zoom + Crossfade) */
 .slide.active {
   opacity: 1;
-  transform: scale(1.05); /* Zoom in pelan */
+  transform: scale(1.05);
   z-index: 2;
-  /* Transisi: Opacity 2 detik, Zoom 7 detik */
   transition: opacity 2s ease-in-out, transform 7s cubic-bezier(0.215, 0.610, 0.355, 1.000);
 }
 
-/* Saat foto KELUAR - Tetap di posisi zoom terakhir */
 .slide.exit {
   opacity: 0;
   transform: scale(1.05);
@@ -203,12 +198,10 @@ body {
   transition: opacity 2s ease-in-out;
 }
 
-/* =========================================
-   TEKS PESAN (CAPTION)
-========================================= */
+/* TEKS PESAN (CAPTION) DI ATAS FOTO */
 .text {
   position: absolute;
-  bottom: 15%; /* Posisi dari bawah */
+  bottom: 15%;
   width: 100%;
   text-align: center;
   font-size: 1.2rem;
@@ -216,7 +209,7 @@ body {
   padding: 0 25px;
   opacity: 0;
   transform: translateY(20px);
-  z-index: 5; /* Di atas overlay gradient */
+  z-index: 5;
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
@@ -232,7 +225,7 @@ body {
 }
 
 /* =========================================
-   4. HALAMAN TERAKHIR: PENUTUP (FINAL)
+   4. HALAMAN TERAKHIR: PENUTUP & FOTO FINAL
 ========================================= */
 #final {
   position: absolute;
@@ -256,14 +249,56 @@ body {
   pointer-events: all;
 }
 
-#final p {
+/* Wadah Teks Akhir */
+#final-text-container {
+  transition: opacity 1s ease, transform 1s ease;
+  opacity: 1;
+  position: relative; 
+  z-index: 2;
+}
+
+#final-text-container p {
   font-size: 1.2rem;
   line-height: 1.8;
-  margin-bottom: 30px;
   color: #f0f0f0;
 }
 
+/* Class saat teks akhir disembunyikan */
+#final-text-container.hide {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+/* Foto Terakhir (Awalnya Tersembunyi) */
+#final-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 85%;
+  max-height: 60vh; 
+  object-fit: contain;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(255,255,255,0.15);
+  
+  opacity: 0;
+  transform: translate(-50%, -40%) scale(0.9); /* Sedikit di bawah */
+  transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+}
+
+/* Class saat foto akhir dimunculkan */
+#final-image.show {
+  opacity: 1;
+  transform: translate(-50%, -55%) scale(1); /* Tepat di tengah */
+  z-index: 3;
+}
+
+/* Tombol Putar Ulang */
 #replay {
+  z-index: 10; /* Pastikan selalu bisa diklik */
+  position: relative;
+  margin-top: 30px;
   padding: 12px 30px;
   border: none;
   border-radius: 30px;
@@ -277,4 +312,28 @@ body {
 
 #replay:active {
   transform: scale(0.95);
+}
+
+/* =========================================
+   TOMBOL PAUSE TIMER
+========================================= */
+#pauseBtn {
+  margin-top: 10px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+#pauseBtn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+#pauseBtn.paused {
+  background: #28a745; /* Berubah hijau kalau di-pause */
 }
